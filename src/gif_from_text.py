@@ -1,17 +1,17 @@
+import os
+import string
+from PIL import Image
 
-
-
-
-base_dir = 'dataset/asl_dataset'
+BASE_DIR = 'dataset/asl_dataset'
 sign_images = {}
 
-for sign_name in os.listdir(base_dir):
-    sign_dir = os.path.join(base_dir, sign_name)
+for sign_name in os.listdir(BASE_DIR):
+    sign_dir = os.path.join(BASE_DIR, sign_name)
     if os.path.isdir(sign_dir):
         image_files = [os.path.join(sign_dir, f) for f in os.listdir(sign_dir) if f.endswith(('.jpg', '.png', '.jpeg'))]
         image_files.sort()  # Ensure images are in order
         sign_images[sign_name] = image_files
-sign_images['SPACE'] = [base_dir+"/SPACE/space.jpeg"]
+sign_images['SPACE'] = [BASE_DIR+"/SPACE/space.jpeg"]
 
 print(f"Loaded {len(sign_images)} signs.")
 print(sign_images)
