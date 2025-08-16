@@ -42,13 +42,13 @@ class landmarkDetection:
         return res
 
 
-landmard_detection = landmarkDetection()
 
 def main():
     """
     Main function to capture webcam feed and display hand landmarks.
     """
 
+    landmard_detection = landmarkDetection()
     # Start capturing video from the webcam (device 0)
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
