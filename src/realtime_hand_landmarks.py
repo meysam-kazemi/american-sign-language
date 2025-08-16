@@ -8,15 +8,46 @@ mp_hands = mp.solutions.hands
 # Initialize the drawing utilities
 mp_drawing = mp.solutions.drawing_utils
 
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+
+class landmarkDetection:
+    def __init__(self, min_confidence=0.3, num_hands=2):
+        self.min_confidence = min_confidence
+        self.num_hands = num_hands
+
+        self.mp_hands = mp.solutions.hands
+        self.mp_drawing = mp.solutions.drawing_utils
+        self.hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+
+    def detect(self, image):
+        return self.hands.process(image)
+    
+    def draw_with_landmark(self, image, multi_hand_landmarks=None):
+        if multi_hand_landmarks: # if the hand be in the image.
+            # Loop through all detected hands
+            for hand_landmarks in multi_hand_landmarks:
+                # Draw the landmarks and their connections on the frame
+                mp_drawing.draw_landmarks(
+                    image,
+                    hand_landmarks,
+                    mp_hands.HAND_CONNECTIONS,
+                    mp_drawing.DrawingSpec(color=(255, 22, 76), thickness=2, circle_radius=4), # Landmark style
+                    mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2)  # Connection style
+                )
+
+    def draw_without_landmark(self, image):
+        res = self.detect(image)
+        multi_hand_landmarks = res.multi_hand_landmarks
+        self.draw_with_landmark(image, multi_hand_landmarks)
+        return res
+
+
+landmard_detection = landmarkDetection()
+
 def main():
     """
     Main function to capture webcam feed and display hand landmarks.
     """
-    # Initialize the Hands model
-    # - static_image_mode=False: Treat the input images as a video stream.
-    # - max_num_hands=2: Detect up to two hands.
-    # - min_detection_confidence=0.5: Minimum confidence value for the hand detection to be considered successful.
-    hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5)
 
     # Start capturing video from the webcam (device 0)
     cap = cv2.VideoCapture(0)
@@ -40,22 +71,10 @@ def main():
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
         # Process the image and find hand landmarks
-        results = hands.process(image_rgb)
-        print(results.multi_hand_landmarks)
+        landmark = landmard_detection.detect(image_rgb)
+        print(landmark.multi_hand_landmarks)
+        landmard_detection.draw_with_landmark(frame, landmark.multi_hand_landmarks)
 
-        # Check if any hands were detected
-        if results.multi_hand_landmarks:
-            # Loop through all detected hands
-            for hand_landmarks in results.multi_hand_landmarks:
-                # Draw the landmarks and their connections on the frame
-                mp_drawing.draw_landmarks(
-                    frame,
-                    hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS,
-                    mp_drawing.DrawingSpec(color=(255, 22, 76), thickness=2, circle_radius=4), # Landmark style
-                    mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2)  # Connection style
-                )
-        
         # Display the frame in a window
         cv2.imshow('MediaPipe Hand Landmarks', frame)
 
