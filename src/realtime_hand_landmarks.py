@@ -41,6 +41,7 @@ def main():
         
         # Process the image and find hand landmarks
         results = hands.process(image_rgb)
+        print(results.multi_hand_landmarks)
 
         # Check if any hands were detected
         if results.multi_hand_landmarks:
@@ -51,7 +52,7 @@ def main():
                     frame,
                     hand_landmarks,
                     mp_hands.HAND_CONNECTIONS,
-                    mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4), # Landmark style
+                    mp_drawing.DrawingSpec(color=(255, 22, 76), thickness=2, circle_radius=4), # Landmark style
                     mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2)  # Connection style
                 )
         
