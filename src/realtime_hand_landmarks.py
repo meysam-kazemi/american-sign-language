@@ -2,14 +2,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-# --- MediaPipe Initialization ---
-# Initialize the Hands solution
-mp_hands = mp.solutions.hands
-# Initialize the drawing utilities
-mp_drawing = mp.solutions.drawing_utils
-
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
-
 class landmarkDetection:
     def __init__(self, min_confidence=0.3, num_hands=2):
         self.min_confidence = min_confidence
