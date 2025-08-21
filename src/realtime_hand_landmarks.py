@@ -27,12 +27,12 @@ class landmarkDetection:
             # Loop through all detected hands
             for hand_landmarks in multi_hand_landmarks:
                 # Draw the landmarks and their connections on the frame
-                mp_drawing.draw_landmarks(
+                self.mp_drawing.draw_landmarks(
                     image,
                     hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS,
-                    mp_drawing.DrawingSpec(color=(255, 22, 76), thickness=2, circle_radius=4), # Landmark style
-                    mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2)  # Connection style
+                    self.mp_hands.HAND_CONNECTIONS,
+                    self.mp_drawing.DrawingSpec(color=(255, 22, 76), thickness=2, circle_radius=4), # Landmark style
+                    self.mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2)  # Connection style
                 )
 
     def draw_without_landmark(self, image):
