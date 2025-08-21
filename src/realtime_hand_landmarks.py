@@ -8,12 +8,16 @@ from src.utils import load_config
 
 class landmarkDetection:
     def __init__(self, config):
-        self.min_confidence = config.get("LANDMARK_DETECTION", 'min_confidence')
-        self.num_hands = config.get("LANDMARK_DETECTION", 'num_hands')
+        self.min_confidence = float(config.get("LANDMARK_DETECTION", 'min_confidence'))
+        self.num_hands = int(config.get("LANDMARK_DETECTION", 'num_hands'))
 
         self.mp_hands = mp.solutions.hands
         self.mp_drawing = mp.solutions.drawing_utils
-        self.hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+        self.hands = self.mp_hands.Hands(
+            static_image_mode=False,
+            max_num_hands=self.num_hands,
+            min_detection_confidence=self.min_confidence,
+        )
 
     def detect(self, image):
         return self.hands.process(image)
