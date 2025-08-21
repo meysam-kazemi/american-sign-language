@@ -15,15 +15,17 @@ LANDMARKS_DIR = config.get("DATA", "landmarks_dir")
 landmark_detection = landmarkDetection(config)
 all_landmarks = []
 sign_names = os.listdir(TRAIN_DIR)
-os.makedirs("with_landmarks/", exist_ok=True)
+os.makedirs("dataset/with_landmarks/", exist_ok=True)
 for sign_name in sign_names:
-    for i, image in enumerate(os.listdir(os.path.join(sign_names, sign_name))):
-        img = cv.imread(image, 1)
+    os.makedirs("dataset/with_landmarks/"+sign_name, exist_ok=True)
+    for i, image_path in enumerate(os.listdir(os.path.join(TRAIN_DIR, sign_name))):
+        img = cv.imread(os.path.join(TRAIN_DIR, sign_name, image_path), 1)
         img_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         landmarks = landmark_detection.detect(img_rgb)
-        landmard_detection.draw_with_landmark(img, landmarks.multi_hand_landmarks)
+        landmark_detection.draw_with_landmark(img, landmarks.multi_hand_landmarks)
         all_landmarks.append(landmarks)
-        cv.imwrite("dataset/with_landmarks/"+str(i)+".csv", img)
+        cv.imwrite(f"dataset/with_landmarks/{sign_name}/{str(i)}.png", img)
+        print("-"*30+str(i).center(5)+"-"*30)
 
 
 with open(LANDMARKS_DIR, 'wb') as f:
