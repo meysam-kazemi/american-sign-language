@@ -1,23 +1,24 @@
 import os
+import sys
 import string
 from PIL import Image
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.utils import load_config
 
-BASE_DIR = 'dataset/asl_dataset'
+config = load_config()
+
+BASE_DIR = config['DATA']['train_dir']
+
 sign_images = {}
 
 for sign_name in os.listdir(BASE_DIR):
     sign_dir = os.path.join(BASE_DIR, sign_name)
     if os.path.isdir(sign_dir):
-        image_files = [os.path.join(sign_dir, f) for f in os.listdir(sign_dir) if f.endswith(('.jpg', '.png', '.jpeg'))]
-        image_files.sort()  # Ensure images are in order
-        sign_images[sign_name] = image_files
-sign_images['SPACE'] = [BASE_DIR+"/SPACE/space.jpeg"]
+        image_file = os.path.join(sign_dir, sign_name+'1.jpg')
+        sign_images[sign_name.lower()] = image_file
 
 print(f"Loaded {len(sign_images)} signs.")
-print(sign_images)
 
-
-import string
 
 def map_text_to_signs(text, sign_images):
     """
@@ -35,16 +36,18 @@ def map_text_to_signs(text, sign_images):
     processed_text = text.lower().translate(translator)
 
     mapped_signs = []
+    mapped_signs.append('nothing')
     for letter in processed_text:
         if letter in sign_images:
             mapped_signs.append(letter)
         elif letter == ' ':
-            mapped_signs.append('SPACE')
+            mapped_signs.append('space')
 
         # Option to handle missing words (currently skipping)
         # else:
         #     mapped_signs.append("FINGER_SPELL") # Placeholder for finger-spelling
-    mapped_signs.append('SPACE')
+    mapped_signs.append('nothing')
+    mapped_signs.append('nothing')
 
     return mapped_signs
 
@@ -70,7 +73,7 @@ def get_image_sequence(mapped_signs, sign_images):
     image_sequence = []
     for sign_name in mapped_signs:
         if sign_name in sign_images:
-            image_sequence.append(sign_images[sign_name][0])
+            image_sequence.append(sign_images[sign_name])
         else:
             # This case should ideally not be hit with the current mapping,
             # but including for robustness. Could add a placeholder image here.
@@ -80,14 +83,11 @@ def get_image_sequence(mapped_signs, sign_images):
     return image_sequence
 
 # Example usage (optional, for testing)
-mapped_signs_example = ['h', 'e', 'l', 'SPACE', 'l', 'o'] # Assuming these signs exist
+mapped_signs_example = ['h', 'e', 'l', 'space', 'l', 'o'] # Assuming these signs exist
 sequence = get_image_sequence(mapped_signs_example, sign_images)
 print(f"Generated image sequence with {len(sequence)} images.")
 print(sequence[:10]) # Print first 10 paths as a sample
 
-
-
-from PIL import Image
 
 def create_animated_gif(image_paths, output_filename, duration=200, loop=0):
     """
@@ -95,7 +95,7 @@ def create_animated_gif(image_paths, output_filename, duration=200, loop=0):
 
     Args:
         image_paths: A list of file paths to the images.
-        output_filename: The name of the output GIF file.
+       output_filename: The name of the output GIF file.
         duration: The duration (in milliseconds) for each frame.
         loop: The number of times the GIF should loop (0 for infinite).
     """
@@ -103,6 +103,7 @@ def create_animated_gif(image_paths, output_filename, duration=200, loop=0):
         print("No images provided to create GIF.")
         return
 
+    print(f'image_paths{image_paths}')
     # Open the first image
     first_image = Image.open(image_paths[0])
 

@@ -1,19 +1,15 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-
-# --- MediaPipe Initialization ---
-# Initialize the Hands solution
-mp_hands = mp.solutions.hands
-# Initialize the drawing utilities
-mp_drawing = mp.solutions.drawing_utils
-
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.utils import load_config
 
 class landmarkDetection:
-    def __init__(self, min_confidence=0.3, num_hands=2):
-        self.min_confidence = min_confidence
-        self.num_hands = num_hands
+    def __init__(self, config):
+        self.min_confidence = config.get("LANDMARK_DETECTION", 'min_confidence')
+        self.num_hands = config.get("LANDMARK_DETECTION", 'num_hands')
 
         self.mp_hands = mp.solutions.hands
         self.mp_drawing = mp.solutions.drawing_utils
@@ -42,13 +38,15 @@ class landmarkDetection:
         return res
 
 
-landmard_detection = landmarkDetection()
 
 def main():
     """
     Main function to capture webcam feed and display hand landmarks.
     """
 
+    config = load_config()
+
+    landmard_detection = landmarkDetection(config)
     # Start capturing video from the webcam (device 0)
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
