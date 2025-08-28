@@ -32,12 +32,15 @@ for sign_name in sign_names:
         img_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         landmarks = landmark_detection.detect(img_rgb)
         landmark_detection.draw_with_landmark(img, landmarks.multi_hand_landmarks)
-        all_landmarks.append(landmarks.multi_hand_landmarks)
-        cv.imwrite(f"dataset/with_landmarks/{sign_name}/{str(i)}.png", img)
+        if landmarks.multi_hand_landmarks:
+            all_landmarks.append(landmarks.multi_hand_landmarks)
+            #cv.imwrite(f"dataset/with_landmarks/{sign_name}/{str(i)}.png", img)
+        else:
+            continue
         loading = (50*i/len(image_paths)) + 1
         print(f'{sign_name:<5}:[{"="*math.ceil(loading):<50}] {loading:.2f}%', end='\r')
-    print(f'Saving {sign_name} in {LANDMARKS_DIR+sign_name+".pkl"} ...', end='\r')
-    print(f'Saved {sign_name} in {LANDMARKS_DIR+sign_name+".pkl"} ✔\n')
+    print(f'\nSaving {sign_name} in {LANDMARKS_DIR+sign_name+".pkl"} ...', end='\r')
+    print(f'Saved {sign_name} in {LANDMARKS_DIR+sign_name+".pkl"} ✔')
     save_landmarks(all_landmarks, landmarks_dir=LANDMARKS_DIR+sign_name+".pkl")
 
 
