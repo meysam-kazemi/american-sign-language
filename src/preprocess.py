@@ -12,21 +12,28 @@ config = load_config()
 TRAIN_DIR = config.get('DATA', 'train_dir')
 LANDMARKS_DIR = config.get("DATA", "landmarks_dir")
 
+def save_landmarks(all_landmarks, landmarks_dir=LANDMARKS_DIR):
+    with open(landmarks_dir, 'wb') as f:
+        pickle.dump(all_landmarks, f)
+
 landmark_detection = landmarkDetection(config)
 all_landmarks = []
 sign_names = os.listdir(TRAIN_DIR)
 os.makedirs("dataset/with_landmarks/", exist_ok=True)
+os.makedirs(LANDMARKS_DIR, exist_ok=True)
 for sign_name in sign_names:
     os.makedirs("dataset/with_landmarks/"+sign_name, exist_ok=True)
-    for i, image_path in enumerate(os.listdir(os.path.join(TRAIN_DIR, sign_name))):
+    image_paths = os.listdir(os.path.join(TRAIN_DIR, sign_name))
+    for i, image_path in enumerate(image_paths):
         img = cv.imread(os.path.join(TRAIN_DIR, sign_name, image_path), 1)
         img_rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         landmarks = landmark_detection.detect(img_rgb)
         landmark_detection.draw_with_landmark(img, landmarks.multi_hand_landmarks)
         all_landmarks.append(landmarks)
         cv.imwrite(f"dataset/with_landmarks/{sign_name}/{str(i)}.png", img)
-        print("-"*30+str(i).center(5)+"-"*30)
+        loading = int(20*i/len(image_paths)) + 1
+        print(f'{"="*loading:<20}|{loading}%', end='\r')
+    print()
+    save_landmarks(all_landmarks, landmarks_dir=LANDMARKS_DIR+sign_name+".pkl")
 
 
-with open(LANDMARKS_DIR, 'wb') as f:
-    pickle.dump(all_landmarks, f)
