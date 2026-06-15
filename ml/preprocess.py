@@ -9,7 +9,7 @@ import pickle
 import cv2 as cv
 import numpy as np
 
-from ml.config import load_config
+from ml.config import get_settings
 from ml.landmarks import LandmarkDetector
 
 
@@ -19,13 +19,14 @@ def save_landmarks(features, path):
         pickle.dump(np.asarray(features, dtype=np.float32), f)
 
 
-def load_saved_landmarks(config):
+def load_saved_landmarks(settings=None):
     """Load all cached landmark features and labels.
 
     Returns:
         (X, y): X is an (N, 63) float32 array, y is a list of N string labels.
     """
-    landmarks_dir = config.get("DATA", "landmarks_dir")
+    settings = settings or get_settings()
+    landmarks_dir = settings.landmarks_dir
     all_features, all_labels = [], []
 
     print("\nLoading landmark data...")
@@ -42,15 +43,15 @@ def load_saved_landmarks(config):
     return X, all_labels
 
 
-def build_cache(config=None):
+def build_cache(settings=None):
     """Extract landmarks from every training image and write one pickle per sign."""
-    config = config or load_config()
-    train_dir = config.get("DATA", "train_dir")
-    landmarks_dir = config.get("DATA", "landmarks_dir")
+    settings = settings or get_settings()
+    train_dir = settings.train_dir
+    landmarks_dir = settings.landmarks_dir
     os.makedirs(landmarks_dir, exist_ok=True)
 
     # static_image_mode=True is correct for processing independent still images.
-    detector = LandmarkDetector.from_config(config, static_image_mode=True)
+    detector = LandmarkDetector.from_settings(settings, static_image_mode=True)
 
     for sign_name in sorted(os.listdir(train_dir)):
         sign_dir = os.path.join(train_dir, sign_name)

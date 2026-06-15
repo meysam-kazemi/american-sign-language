@@ -8,21 +8,17 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from ml.classifier import LandmarkMLP, save_labels
-from ml.config import load_config
+from ml.config import get_settings
 from ml.preprocess import load_saved_landmarks
 
-MODEL_DIR = "models"
-MODEL_PATH = os.path.join(MODEL_DIR, "asl_landmark_mlp.pth")
-LABELS_PATH = os.path.join(MODEL_DIR, "labels.json")
 
-
-def train(config=None):
-    config = config or load_config()
+def train(settings=None):
+    settings = settings or get_settings()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    batch_size = config.getint("TRAIN", "batch_size", fallback=32)
-    num_epochs = config.getint("TRAIN", "epoch", fallback=100)
+    batch_size = settings.train_batch_size
+    num_epochs = settings.train_epochs
 
-    X, y = load_saved_landmarks(config)
+    X, y = load_saved_landmarks(settings)
     if len(X) == 0:
         raise RuntimeError("No landmark data found. Run `python -m ml.preprocess` first.")
 
@@ -43,7 +39,7 @@ def train(config=None):
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     best_acc = 0.0
-    os.makedirs(MODEL_DIR, exist_ok=True)
+    os.makedirs(settings.model_dir, exist_ok=True)
     for epoch in range(1, num_epochs + 1):
         model.train()
         running = 0.0
@@ -59,10 +55,10 @@ def train(config=None):
         print(f"Epoch {epoch:>3}/{num_epochs} | loss {running/len(train_loader):.4f} | val acc {acc:.3f}")
         if acc >= best_acc:
             best_acc = acc
-            torch.save(model.state_dict(), MODEL_PATH)
-            save_labels(classes, LABELS_PATH)
+            torch.save(model.state_dict(), settings.model_path)
+            save_labels(classes, settings.labels_path)
 
-    print(f"Done. Best val acc {best_acc:.3f}. Saved -> {MODEL_PATH}")
+    print(f"Done. Best val acc {best_acc:.3f}. Saved -> {settings.model_path}")
 
 
 @torch.no_grad()

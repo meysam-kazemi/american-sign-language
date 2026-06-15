@@ -3,6 +3,10 @@ models/
 *.pyc
 __pycache__/
 
+# Env
+.env
+.venv/
+
 # Claude
 .claude/
 CLAUDE.md

@@ -5,7 +5,7 @@ import string
 
 from PIL import Image
 
-from ml.config import load_config
+from ml.config import get_settings
 
 
 def load_sign_images(base_dir=None):
@@ -14,7 +14,7 @@ def load_sign_images(base_dir=None):
     Looks for ``<sign>/<sign>1.jpg`` (the dataset naming convention) and falls
     back to the first image found in each sign's folder.
     """
-    base_dir = base_dir or load_config().get("DATA", "train_dir")
+    base_dir = base_dir or get_settings().train_dir
     sign_images = {}
     for sign_name in os.listdir(base_dir):
         sign_dir = os.path.join(base_dir, sign_name)

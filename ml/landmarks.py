@@ -20,10 +20,10 @@ class LandmarkDetector:
         )
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_settings(cls, settings, **kwargs):
         return cls(
-            min_confidence=float(config.get("LANDMARK_DETECTION", "min_confidence")),
-            num_hands=int(config.get("LANDMARK_DETECTION", "num_hands")),
+            min_confidence=settings.landmark_min_confidence,
+            num_hands=settings.landmark_num_hands,
             **kwargs,
         )
 
@@ -77,9 +77,9 @@ class LandmarkDetector:
 
 def _demo():
     """Open the webcam and visualize detected landmarks. Press 'q' to quit."""
-    from ml.config import load_config
+    from ml.config import get_settings
 
-    detector = LandmarkDetector.from_config(load_config())
+    detector = LandmarkDetector.from_settings(get_settings())
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Error: Could not open webcam.")
