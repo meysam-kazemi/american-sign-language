@@ -35,8 +35,27 @@ uv run python -m ml.preprocess   # extract hand landmarks -> dataset/landmarks/*
 uv run python -m ml.train        # train classifier -> models/asl_landmark_mlp.pth + labels.json
 ```
 
+## Running the backend (API)
+
+```bash
+uv sync --extra backend
+uv run uvicorn backend.main:app --reload
+```
+
+Endpoints:
+- `GET  /health` — liveness check
+- `POST /api/text-to-gif` — Flow 2: text → ASL GIF
+- `POST /api/voice-to-gif` — Flow 3: spoken audio → text → ASL GIF
+- `POST /api/speech-to-text` — Whisper transcription
+- `POST /api/text-to-speech` — Piper speech synthesis (Flow 4)
+- `WS   /ws/recognize` — Flow 1: stream camera frames → live caption
+
+Recognition endpoints require a trained model in `models/` (see Training).
+
 ## Project layout
 
 ```
-ml/   importable ML package: landmarks, classifier, training, gif builder, stream decoder
+ml/        importable ML package: landmarks, classifier, training, gif builder,
+           stream decoder, speech-to-text, text-to-speech
+backend/   FastAPI app: routers (gif, voice, recognize), lazy ML services
 ```
