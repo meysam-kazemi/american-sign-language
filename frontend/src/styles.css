@@ -1,0 +1,91 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --accent: #6366f1;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  margin: 0.25rem 0 1.5rem;
+  color: var(--muted);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--panel);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.tab.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 320px;
+}
+
+.placeholder {
+  color: var(--muted);
+}
+
+button {
+  font-family: inherit;
+}
+
+.btn {
+  padding: 0.55rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #f87171;
+  margin-top: 0.75rem;
+}
