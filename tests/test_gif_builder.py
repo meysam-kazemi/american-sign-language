@@ -10,7 +10,7 @@ def test_map_text_lowercases_and_strips_punctuation():
 
 
 def test_map_text_spaces_become_space_token():
-    assert map_text_to_signs("a b") == ["a", "space"]
+    assert map_text_to_signs("a b") == ["a", "space", "b"]
 
 
 def test_map_text_keeps_digits():
