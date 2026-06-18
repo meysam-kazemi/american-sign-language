@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LiveRecognition from "./components/LiveRecognition.jsx";
 import TextToGif from "./components/TextToGif.jsx";
 
 const TABS = [
@@ -31,7 +32,9 @@ export default function App() {
       </nav>
 
       <main className="panel">
-        {tab === "text" ? (
+        {tab === "live" ? (
+          <LiveRecognition />
+        ) : tab === "text" ? (
           <TextToGif />
         ) : (
           <p className="placeholder">Coming soon: {TABS.find((t) => t.id === tab).label}</p>
