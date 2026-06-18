@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CameraToSpeech from "./components/CameraToSpeech.jsx";
 import LiveRecognition from "./components/LiveRecognition.jsx";
 import TextToGif from "./components/TextToGif.jsx";
 import VoiceToGif from "./components/VoiceToGif.jsx";
@@ -40,7 +41,7 @@ export default function App() {
         ) : tab === "voice" ? (
           <VoiceToGif />
         ) : (
-          <p className="placeholder">Coming soon: {TABS.find((t) => t.id === tab).label}</p>
+          <CameraToSpeech />
         )}
       </main>
     </div>
