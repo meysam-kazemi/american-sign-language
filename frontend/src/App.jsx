@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LiveRecognition from "./components/LiveRecognition.jsx";
 import TextToGif from "./components/TextToGif.jsx";
+import VoiceToGif from "./components/VoiceToGif.jsx";
 
 const TABS = [
   { id: "live", label: "Live Recognition" },
@@ -36,6 +37,8 @@ export default function App() {
           <LiveRecognition />
         ) : tab === "text" ? (
           <TextToGif />
+        ) : tab === "voice" ? (
+          <VoiceToGif />
         ) : (
           <p className="placeholder">Coming soon: {TABS.find((t) => t.id === tab).label}</p>
         )}
