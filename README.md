@@ -52,10 +52,26 @@ Endpoints:
 
 Recognition endpoints require a trained model in `models/` (see Training).
 
+## Running the frontend (React)
+
+```bash
+cd frontend
+npm install
+cp .env.example .env   # point VITE_API_URL / VITE_WS_URL at the backend
+npm run dev            # dev server on http://localhost:5173
+```
+
+Tabs map to the four flows:
+- **Live Recognition** (Flow 1) — webcam frames streamed over the WebSocket → live caption
+- **Text → GIF** (Flow 2)
+- **Voice → GIF** (Flow 3) — record audio, transcribe, render signs
+- **Camera → Speech** (Flow 4) — recognize signs to text, then synthesize speech
+
 ## Project layout
 
 ```
 ml/        importable ML package: landmarks, classifier, training, gif builder,
            stream decoder, speech-to-text, text-to-speech
 backend/   FastAPI app: routers (gif, voice, recognize), lazy ML services
+frontend/  Vite + React app: tabbed UI for the four flows
 ```
