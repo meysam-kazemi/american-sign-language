@@ -1,4 +1,5 @@
 import { useState } from "react";
+import TextToGif from "./components/TextToGif.jsx";
 
 const TABS = [
   { id: "live", label: "Live Recognition" },
@@ -30,7 +31,11 @@ export default function App() {
       </nav>
 
       <main className="panel">
-        <p className="placeholder">Coming soon: {TABS.find((t) => t.id === tab).label}</p>
+        {tab === "text" ? (
+          <TextToGif />
+        ) : (
+          <p className="placeholder">Coming soon: {TABS.find((t) => t.id === tab).label}</p>
+        )}
       </main>
     </div>
   );
