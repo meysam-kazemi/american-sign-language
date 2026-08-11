@@ -3,15 +3,31 @@ services:
     build: .
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      ASL_TRAIN_DIR: /app/dataset/asl_alphabet_train
+      ASL_LANDMARKS_DIR: /app/dataset/landmarks
+      ASL_SIGNS_DIR: /app/dataset/asl_alphabet_train
+      ASL_MODEL_DIR: /app/models
+      TTS_MODEL_PATH: /app/voices/${TTS_VOICE:-en_US-amy-medium}.onnx
+      WHISPER_MODEL: ${WHISPER_MODEL:-base}
     volumes:
-      # Trained model artifacts (gitignored); mount so the container can load them.
+      - ./dataset:/app/dataset:ro
       - ./models:/app/models:ro
+      - ./voices:/app/voices:ro
+      - whisper-cache:/home/appuser/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build: ./frontend
     ports:
       - "5173:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+
+volumes:
+  whisper-cache:

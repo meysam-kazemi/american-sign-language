@@ -1,11 +1,20 @@
-dataset/
-models/
+dataset/*
+!dataset/README.md
+models/*
+!models/README.md
+voices/*
+!voices/README.md
 *.pyc
 __pycache__/
 
 # Env
 .env
 .venv/
+.cache/
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/
 
 # Claude
 .claude/
