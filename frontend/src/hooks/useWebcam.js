@@ -10,6 +10,10 @@ export function useWebcam() {
   const start = useCallback(async () => {
     setError("");
     try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Camera access is not supported by this browser");
+      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       streamRef.current = stream;
       if (videoRef.current) {
@@ -17,8 +21,11 @@ export function useWebcam() {
         await videoRef.current.play();
       }
       setActive(true);
+      return true;
     } catch (err) {
       setError(err.message || "Could not access camera");
+      setActive(false);
+      return false;
     }
   }, []);
 

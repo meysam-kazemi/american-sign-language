@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { voiceToGif } from "../api";
+import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useRecorder } from "../hooks/useRecorder";
 
 export default function VoiceToGif() {
   const { recording, error: micError, start, stop } = useRecorder();
-  const [gifUrl, setGifUrl] = useState(null);
+  const gif = useObjectUrl();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,11 +15,10 @@ export default function VoiceToGif() {
     setError("");
     setLoading(true);
     try {
-      const url = await voiceToGif(blob);
-      setGifUrl(url);
+      gif.setBlob(await voiceToGif(blob));
     } catch (err) {
       setError(err.message);
-      setGifUrl(null);
+      gif.clear();
     } finally {
       setLoading(false);
     }
@@ -27,8 +27,8 @@ export default function VoiceToGif() {
   return (
     <div>
       <h2>Voice → ASL GIF</h2>
-      <p style={{ color: "#94a3b8" }}>Record a sentence; it gets transcribed and turned into signs.</p>
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+      <p className="help">Record a short English sentence; it is transcribed and fingerspelled.</p>
+      <div className="actions">
         {!recording ? (
           <button className="btn" disabled={loading} onClick={start}>
             {loading ? "Processing…" : "Start recording"}
@@ -37,10 +37,10 @@ export default function VoiceToGif() {
           <button className="btn" onClick={handleStop}>Stop &amp; generate</button>
         )}
       </div>
-      {(error || micError) && <p className="error">{error || micError}</p>}
-      {gifUrl && (
-        <div style={{ marginTop: "1rem" }}>
-          <img src={gifUrl} alt="ASL animation" style={{ maxWidth: "100%", borderRadius: 8 }} />
+      {(error || micError) && <p className="error" role="alert">{error || micError}</p>}
+      {gif.url && (
+        <div className="media-result">
+          <img src={gif.url} alt="ASL fingerspelling generated from speech" />
         </div>
       )}
     </div>

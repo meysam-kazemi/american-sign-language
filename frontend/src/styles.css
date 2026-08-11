@@ -2,8 +2,10 @@
   --bg: #0f172a;
   --panel: #1e293b;
   --accent: #6366f1;
+  --accent-hover: #818cf8;
   --text: #e2e8f0;
   --muted: #94a3b8;
+  --border: #334155;
 }
 
 * {
@@ -15,6 +17,7 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
+  min-width: 320px;
 }
 
 .app {
@@ -28,9 +31,40 @@ header h1 {
   font-size: 1.8rem;
 }
 
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .subtitle {
   margin: 0.25rem 0 1.5rem;
   color: var(--muted);
+}
+
+.health {
+  flex: none;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.health.ready {
+  border-color: #22c55e;
+  color: #86efac;
+}
+
+.health.degraded {
+  border-color: #f59e0b;
+  color: #fcd34d;
+}
+
+.health.offline {
+  border-color: #ef4444;
+  color: #fca5a5;
 }
 
 .tabs {
@@ -50,6 +84,12 @@ header h1 {
   font-size: 0.95rem;
 }
 
+.tab:hover,
+.tab:focus-visible {
+  border-color: var(--accent-hover);
+  color: var(--text);
+}
+
 .tab.active {
   border-color: var(--accent);
   color: var(--text);
@@ -62,8 +102,80 @@ header h1 {
   min-height: 320px;
 }
 
-.placeholder {
+.muted,
+.help,
+.status {
   color: var(--muted);
+}
+
+.help {
+  margin-top: -0.35rem;
+}
+
+.status {
+  margin: 0.75rem 0 0;
+}
+
+.camera {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  max-height: 480px;
+  border-radius: 8px;
+  background: #000;
+  object-fit: contain;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.result-text {
+  min-height: 2rem;
+  margin-top: 0.5rem;
+  overflow-wrap: anywhere;
+  font-size: 1.4rem;
+}
+
+.media-result {
+  margin-top: 1rem;
+}
+
+.media-result img {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.audio {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #0f172a;
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+textarea:focus-visible,
+button:focus-visible {
+  outline: 3px solid rgb(129 140 248 / 45%);
+  outline-offset: 2px;
 }
 
 button {
@@ -80,6 +192,19 @@ button {
   font-size: 0.95rem;
 }
 
+.btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn.secondary {
+  border: 1px solid var(--border);
+  background: transparent;
+}
+
+.btn.secondary:hover:not(:disabled) {
+  border-color: var(--accent-hover);
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -88,4 +213,36 @@ button {
 .error {
   color: #f87171;
   margin-top: 0.75rem;
+}
+
+.notice {
+  margin-top: 0.75rem;
+  color: #fcd34d;
+}
+
+.setup-notice {
+  margin: -0.75rem 0 1rem;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+@media (max-width: 520px) {
+  .app {
+    padding-top: 1rem;
+  }
+
+  .header-row {
+    display: block;
+  }
+
+  .health {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
 }
