@@ -1,7 +1,8 @@
 """Hand landmark detection and feature extraction using MediaPipe."""
+
 import cv2
-import numpy as np
 import mediapipe as mp
+import numpy as np
 
 
 class LandmarkDetector:
@@ -42,9 +43,7 @@ class LandmarkDetector:
         Coordinates are made relative to the wrist (landmark 0) and scaled by the
         largest coordinate span so the feature is robust to hand position and size.
         """
-        coords = np.array(
-            [[lm.x, lm.y, lm.z] for lm in hand_landmarks.landmark], dtype=np.float32
-        )
+        coords = np.array([[lm.x, lm.y, lm.z] for lm in hand_landmarks.landmark], dtype=np.float32)
         coords -= coords[0]  # translate so wrist is at the origin
         max_span = np.abs(coords).max()
         if max_span > 0:

@@ -1,4 +1,5 @@
 """Train the landmark MLP classifier on the cached landmark features."""
+
 import os
 
 import numpy as np
@@ -17,18 +18,27 @@ def train(settings=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     batch_size = settings.train_batch_size
     num_epochs = settings.train_epochs
+    torch.manual_seed(settings.train_seed)
+    np.random.seed(settings.train_seed)
 
     X, y = load_saved_landmarks(settings)
-    if len(X) == 0:
+    if len(X) < 2:
         raise RuntimeError("No landmark data found. Run `python -m ml.preprocess` first.")
 
     classes = sorted(set(y))
+    if len(classes) < 2:
+        raise RuntimeError("Training requires landmark samples from at least two sign classes.")
     class_to_idx = {c: i for i, c in enumerate(classes)}
     y_idx = np.array([class_to_idx[label] for label in y], dtype=np.int64)
 
     dataset = TensorDataset(torch.from_numpy(X), torch.from_numpy(y_idx))
-    val_size = max(1, int(0.15 * len(dataset)))
-    train_set, val_set = random_split(dataset, [len(dataset) - val_size, val_size])
+    val_size = min(len(dataset) - 1, max(1, int(0.15 * len(dataset))))
+    generator = torch.Generator().manual_seed(settings.train_seed)
+    train_set, val_set = random_split(
+        dataset,
+        [len(dataset) - val_size, val_size],
+        generator=generator,
+    )
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_set, batch_size=batch_size)
 
@@ -52,7 +62,8 @@ def train(settings=None):
             running += loss.item()
 
         acc = _evaluate(model, val_loader, device)
-        print(f"Epoch {epoch:>3}/{num_epochs} | loss {running/len(train_loader):.4f} | val acc {acc:.3f}")
+        loss = running / len(train_loader)
+        print(f"Epoch {epoch:>3}/{num_epochs} | loss {loss:.4f} | val acc {acc:.3f}")
         if acc >= best_acc:
             best_acc = acc
             torch.save(model.state_dict(), settings.model_path)

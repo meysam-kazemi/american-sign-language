@@ -3,6 +3,7 @@
 Each sign class is saved to its own ``<label>.pkl`` containing a numpy array of
 shape (n_samples, 63). Run as a script to (re)build the landmark cache.
 """
+
 import os
 import pickle
 
@@ -29,6 +30,12 @@ def load_saved_landmarks(settings=None):
     landmarks_dir = settings.landmarks_dir
     all_features, all_labels = [], []
 
+    if not os.path.isdir(landmarks_dir):
+        raise RuntimeError(
+            f"Landmark cache directory {landmarks_dir!r} does not exist. "
+            "Run `python -m ml.preprocess` first."
+        )
+
     print("\nLoading landmark data...")
     for pkl_file in sorted(f for f in os.listdir(landmarks_dir) if f.endswith(".pkl")):
         label = os.path.splitext(pkl_file)[0]
@@ -48,6 +55,11 @@ def build_cache(settings=None):
     settings = settings or get_settings()
     train_dir = settings.train_dir
     landmarks_dir = settings.landmarks_dir
+    if not os.path.isdir(train_dir):
+        raise RuntimeError(
+            f"Training dataset directory {train_dir!r} does not exist. "
+            "Download the ASL image dataset and configure ASL_TRAIN_DIR."
+        )
     os.makedirs(landmarks_dir, exist_ok=True)
 
     # static_image_mode=True is correct for processing independent still images.
@@ -59,7 +71,10 @@ def build_cache(settings=None):
             continue
 
         features = []  # reset per sign so each pickle holds only its own samples
-        image_paths = os.listdir(sign_dir)
+        image_paths = sorted(os.listdir(sign_dir))
+        if not image_paths:
+            print(f"Skipping empty class directory {sign_dir!r}")
+            continue
         for i, image_path in enumerate(image_paths, 1):
             img = cv.imread(os.path.join(sign_dir, image_path), 1)
             if img is None:

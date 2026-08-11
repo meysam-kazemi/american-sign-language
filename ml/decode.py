@@ -4,11 +4,16 @@ A prediction must be repeated for `stability` consecutive frames (above a
 confidence threshold) before it is committed, which debounces flicker. The
 special labels 'space' and 'nothing' are handled when building the sentence.
 """
+
 from collections import deque
 
 
 class StreamDecoder:
     def __init__(self, stability=8, min_confidence=0.6):
+        if not isinstance(stability, int) or stability <= 0:
+            raise ValueError("stability must be a positive integer")
+        if not 0 <= min_confidence <= 1:
+            raise ValueError("min_confidence must be between 0 and 1")
         self.stability = stability
         self.min_confidence = min_confidence
         self.recent = deque(maxlen=stability)
@@ -17,11 +22,14 @@ class StreamDecoder:
 
     def update(self, label, confidence):
         """Feed one frame's prediction. Returns the current decoded text."""
+        if not 0 <= confidence <= 1:
+            raise ValueError("confidence must be between 0 and 1")
         if label is None or confidence < self.min_confidence:
             self.recent.clear()
             self._last_committed = None
             return self.text
 
+        label = label.lower()
         self.recent.append(label)
         if len(self.recent) == self.stability and len(set(self.recent)) == 1:
             stable = self.recent[0]
