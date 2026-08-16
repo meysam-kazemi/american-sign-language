@@ -9,7 +9,7 @@ dependencies = [
     "numpy>=1.26,<2",
     "opencv-contrib-python>=4.9,<4.12",
     "pillow==11.3.0",
-    "mediapipe==0.10.21",
+    "mediapipe==1.0.0",
     "python-dotenv>=1.0",
 ]
 
